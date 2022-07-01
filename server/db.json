@@ -1,20 +1,86 @@
 {
-  "nodes": [
+  "diagram": [
     {
-      "id": "1",
-      "data": { "label": "Node 1" },
-      "position": { "x": 5, "y": 5 }
-    },
-    {
-      "id": "2",
-      "data": { "label": "Node 2" },
-      "position": { "x": 5, "y": 100 }
-    },
-    {
-      "id": "3",
-      "data": { "label": "Node 3" },
-      "position": { "x": 100, "y": 50 }
+      "diagram": [
+        {
+          "nodes": [
+            {
+              "id": "1",
+              "data": {
+                "label": "Node 1"
+              },
+              "position": {
+                "x": 5,
+                "y": 4
+              },
+              "width": 150,
+              "height": 36,
+              "selected": false,
+              "positionAbsolute": {
+                "x": 5,
+                "y": 4
+              },
+              "dragging": false
+            },
+            {
+              "id": "2",
+              "data": {
+                "label": "Node 2"
+              },
+              "position": {
+                "x": 5,
+                "y": 100
+              },
+              "width": 150,
+              "height": 36
+            },
+            {
+              "id": "3",
+              "data": {
+                "label": "Node 3"
+              },
+              "position": {
+                "x": 110,
+                "y": 50.5
+              },
+              "width": 150,
+              "height": 36,
+              "selected": false,
+              "positionAbsolute": {
+                "x": 110,
+                "y": 50.5
+              },
+              "dragging": false
+            }
+          ]
+        },
+        {
+          "edges": [
+            {
+              "id": "reactflow__edge-1-3",
+              "source": "1",
+              "target": "3",
+              "sourceHandle": null,
+              "targetHandle": null
+            },
+            {
+              "source": "1",
+              "sourceHandle": null,
+              "target": "2",
+              "targetHandle": null,
+              "id": "reactflow__edge-1-2"
+            },
+            {
+              "source": "3",
+              "sourceHandle": null,
+              "target": "2",
+              "targetHandle": null,
+              "id": "reactflow__edge-3-2"
+            }
+          ]
+        }
+      ],
+      "id": "bfb8eade-cea6-47ec-9b74-3550d3997339"
     }
-  ],
-  "edges": [{ "id": "e1-2", "source": "1", "target": "2" }]
+  ]
 }

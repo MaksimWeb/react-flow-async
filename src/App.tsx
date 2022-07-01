@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { v4 } from "uuid";
 import ReactFlow, {
   addEdge,
   Connection,
@@ -8,33 +10,38 @@ import ReactFlow, {
   updateEdge,
   useEdgesState,
   useNodesState,
-} from 'react-flow-renderer';
-import { useAppDispatch, useAppSelector } from './app/hooks';
-import { getEdges, getNodes } from './features/diagramSlice/diagramSlice';
-import { initialEdges } from './data/edges';
-import { initialNodes } from './data/nodes';
-import { useEffect } from 'react';
+  Node,
+} from "react-flow-renderer";
+import { useAppDispatch, useAppSelector } from "./app/hooks";
+import {
+  Diagram,
+  useGetDiagramQuery,
+  useSaveDiagramMutation,
+} from "./features/diagramSlice/diagramSlice";
+import { useEffect } from "react";
 
 function App() {
-  const dispatch = useAppDispatch();
   const fitViewOptions: FitViewOptions = {
     padding: 0.2,
   };
 
-  const { nodes, edges } = useAppSelector((state) => state.diagrams);
+  const { data, error, isLoading, isSuccess } = useGetDiagramQuery();
 
-  const [myNodes, setNodes, onNodesChange] = useNodesState(nodes);
-  const [myEdges, setEdges, onEdgesChange] = useEdgesState(edges);
+  const [saveDiagram, result] = useSaveDiagramMutation();
+
+  const [myNodes, setNodes, onNodesChange] = useNodesState(
+    Array.isArray(data) && data.length ? data[0].diagram[0].nodes : []
+  );
+  const [myEdges, setEdges, onEdgesChange] = useEdgesState(
+    Array.isArray(data) && data.length ? data[0].diagram[1].edges : []
+  );
 
   useEffect(() => {
-    dispatch(getNodes());
-    setNodes(nodes);
-  }, [myNodes, setNodes]);
-
-  useEffect(() => {
-    dispatch(getEdges());
-    setEdges(edges);
-  }, [myEdges, setEdges]);
+    if (isSuccess && Array.isArray(data) && data.length) {
+      setNodes(data[0].diagram[0].nodes);
+      setEdges(data[0].diagram[1].edges);
+    }
+  }, [setNodes, data]);
 
   const onEdgeUpdate = (oldEdge: Edge, newConnection: Connection) => {
     setEdges((els) => updateEdge(oldEdge, newConnection, els));
@@ -43,8 +50,28 @@ function App() {
     return setEdges((els) => addEdge(params, els));
   };
 
+  if (isLoading) {
+    return <h1>Wait its loading</h1>;
+  }
+
+  async function handleSaveDiagram() {
+    const newDiagram: Diagram = {
+      id: data[0].id,
+      diagram: [
+        {
+          nodes: myNodes,
+        },
+        {
+          edges: myEdges,
+        },
+      ],
+    };
+
+    await saveDiagram(newDiagram).unwrap();
+  }
+
   return (
-    <div className='App'>
+    <div className="App">
       <ReactFlow
         nodes={myNodes}
         edges={myEdges}
@@ -52,14 +79,14 @@ function App() {
         onNodesChange={onNodesChange}
         onEdgeUpdate={onEdgeUpdate}
         onConnect={onConnect}
-        style={{ height: '500px' }}
+        style={{ height: "500px" }}
         fitView
         fitViewOptions={fitViewOptions}
       >
         <Controls />
         <MiniMap />
       </ReactFlow>
-      <button>Сохранить</button>
+      <button onClick={handleSaveDiagram}>Сохранить</button>
     </div>
   );
 }
